@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.groups.Default;
 import java.util.List;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PatientController {
 
   private final PatientService patientService;
+  private final static Logger log = LoggerFactory.getLogger(PatientController.class);
 
   public PatientController(PatientService patientService) {
     this.patientService = patientService;
@@ -35,6 +39,8 @@ public class PatientController {
   @Operation(summary = "Get Patients")
   public ResponseEntity<List<PatientResponseDTO>> getPatients() {
     List<PatientResponseDTO> patients = patientService.getPatients();
+
+    log.info("Controller: getPatient triggered");
     return ResponseEntity.ok().body(patients);
   }
 
@@ -47,6 +53,7 @@ public class PatientController {
     PatientResponseDTO patientResponseDTO = patientService.createPatient(
         patientRequestDTO);
 
+    log.info("Controller: createPatient triggered");
     return ResponseEntity.ok().body(patientResponseDTO);
   }
 
@@ -58,6 +65,7 @@ public class PatientController {
     PatientResponseDTO patientResponseDTO = patientService.updatePatient(id,
         patientRequestDTO);
 
+    log.info("Controller: updatePatient triggered");
     return ResponseEntity.ok().body(patientResponseDTO);
   }
 
@@ -65,6 +73,8 @@ public class PatientController {
   @Operation(summary = "Delete a Patient")
   public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {
     patientService.deletePatient(id);
+
+    log.info("Controller: deletePatient triggered");
     return ResponseEntity.noContent().build();
   }
 }

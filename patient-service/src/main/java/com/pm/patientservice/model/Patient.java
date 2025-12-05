@@ -13,7 +13,6 @@ import java.util.UUID;
 @Entity
 public class Patient {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
   @NotNull

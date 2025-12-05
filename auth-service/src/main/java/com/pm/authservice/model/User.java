@@ -12,7 +12,6 @@ import java.util.UUID;
 @Table(name="users")
 public class User {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
 
   @Column(unique = true, nullable = false)
@@ -23,6 +22,15 @@ public class User {
 
   @Column(nullable = false)
   private String role;
+
+  public static User of(UUID id, String email, String password, String role) {
+    User u = new User();
+    u.setId(id);
+    u.setEmail(email);
+    u.setPassword(password);
+    u.setRole(role);
+    return u;
+  }
 
   public UUID getId() {
     return id;

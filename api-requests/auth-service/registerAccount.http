@@ -1,0 +1,12 @@
+POST http://localhost:4005/register
+Content-Type: application/json
+
+{
+  "email": "test_patient_with_id6@example.com",
+  "password": "thisIsMyPassword",
+  "role": "user",
+  "name": "Test Patient",
+  "address": "123 main street22",
+  "dateOfBirth": "1995-09-09"
+
+}

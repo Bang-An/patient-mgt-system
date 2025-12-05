@@ -4,6 +4,7 @@ import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
 import com.pm.patientservice.model.Patient;
 import java.time.LocalDate;
+import java.util.UUID;
 
 public class PatientMapper {
   public static PatientResponseDTO toDTO(Patient patient) {
@@ -19,6 +20,7 @@ public class PatientMapper {
 
   public static Patient toModel(PatientRequestDTO patientRequestDTO) {
     Patient patient = new Patient();
+    patient.setId(UUID.fromString(patientRequestDTO.getId()));
     patient.setName(patientRequestDTO.getName());
     patient.setAddress(patientRequestDTO.getAddress());
     patient.setEmail(patientRequestDTO.getEmail());

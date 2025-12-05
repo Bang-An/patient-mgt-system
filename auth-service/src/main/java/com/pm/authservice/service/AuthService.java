@@ -21,6 +21,10 @@ public class AuthService {
     this.jwtUtil = jwtUtil;
   }
 
+  public String encodePassword(String password) {
+    return passwordEncoder.encode(password);
+  }
+
   public Optional<String> authenticate(LoginRequestDTO loginRequestDTO) {
     Optional<String> token = userService.findByEmail(loginRequestDTO.getEmail())
         .filter(u -> passwordEncoder.matches(loginRequestDTO.getPassword(),

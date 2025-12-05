@@ -1,12 +1,11 @@
-package com.pm.patientservice.dto;
+package com.pm.authservice.dto;
 
-import com.pm.patientservice.dto.validators.CreatePatientValidationGroup;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class PatientRequestDTO {
-  @NotBlank(groups = CreatePatientValidationGroup.class, message = "Id is required")
+  @NotBlank(message = "Id is required")
   private String id;
 
   @NotBlank(message = "Name is required")
@@ -23,17 +22,17 @@ public class PatientRequestDTO {
   @NotBlank(message = "Date of birth is required")
   private String dateOfBirth;
 
-  @NotBlank(groups = CreatePatientValidationGroup.class, message =
-      "Registered date is required")
+//  @NotBlank(message = "Registered date is required")
   private String registeredDate;
 
-  public String getId() {
+  public  @NotBlank(message = "Id is required") String getId() {
     return id;
   }
 
-  public void setId(String id) {
+  public void setId( @NotBlank(message = "Id is required") String id) {
     this.id = id;
   }
+
   public @NotBlank(message = "Name is required") @Size(max = 100, message = "Name cannot exceed 100 characters") String getName() {
     return name;
   }
