@@ -57,6 +57,9 @@ public class PatientController {
     return ResponseEntity.ok().body(patientResponseDTO);
   }
 
+  // now api gateway would parse token and inject UserId,email,role in the header
+  // we do not need to rely on user provide ID anymore
+  // we should check header userID == id passed in as path variable
   @PutMapping("/{id}")
   @Operation(summary = "Update a new Patient")
   public ResponseEntity<PatientResponseDTO> updatePatient(@PathVariable UUID id,
@@ -69,6 +72,9 @@ public class PatientController {
     return ResponseEntity.ok().body(patientResponseDTO);
   }
 
+  // now api gateway would parse token and inject UserId,email,role in the header
+  // we do not need to rely on user provide ID anymore
+  // we should check header userID == id passed in as path variable
   @DeleteMapping("/{id}")
   @Operation(summary = "Delete a Patient")
   public ResponseEntity<Void> deletePatient(@PathVariable UUID id) {

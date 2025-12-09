@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +15,12 @@ import java.util.UUID;
 public class User {
   @Id
   private UUID id;
+
+  @Column(nullable = false)
+  private String name;
+
+  @Column(nullable = false)
+  private LocalDate dateOfBirth;
 
   @Column(unique = true, nullable = false)
   private String email;
@@ -23,9 +31,13 @@ public class User {
   @Column(nullable = false)
   private String role;
 
-  public static User of(UUID id, String email, String password, String role) {
+
+
+  public static User of(UUID id, String name, LocalDate dateOfBirth, String email, String password, String role) {
     User u = new User();
     u.setId(id);
+    u.setName(name);
+    u.setDateOfBirth(dateOfBirth);
     u.setEmail(email);
     u.setPassword(password);
     u.setRole(role);
@@ -38,6 +50,21 @@ public class User {
 
   public void setId(UUID id) {
     this.id = id;
+  }
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public LocalDate getDateOfBirth() {
+    return dateOfBirth;
+  }
+
+  public void setDateOfBirth(LocalDate dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
   }
 
   public String getEmail() {

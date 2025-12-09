@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
+import io.jsonwebtoken.Claims;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,9 +25,10 @@ public class JwtUtil {
     this.secretKey = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public String generateToken(String email, String role) {
+  public String generateToken(UUID userId, String email, String role) {
     return Jwts.builder()
-        .subject(email)
+        .subject(userId.toString())
+        .claim("email", email)
         .claim("role", role)
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 *10)) // 10 hours
@@ -38,6 +41,19 @@ public class JwtUtil {
       Jwts.parser().verifyWith((SecretKey) secretKey)
           .build()
           .parseSignedClaims(token);
+    } catch (SignatureException e) {
+      throw new JwtException("Invalid JWT signature");
+    } catch (JwtException e) {
+      throw new JwtException("Invalid JWT");
+    }
+  }
+
+  public Claims parseClaims(String token) {
+    try {
+      return Jwts.parser().verifyWith((SecretKey) secretKey)
+          .build()
+          .parseSignedClaims(token)
+          .getPayload();
     } catch (SignatureException e) {
       throw new JwtException("Invalid JWT signature");
     } catch (JwtException e) {
