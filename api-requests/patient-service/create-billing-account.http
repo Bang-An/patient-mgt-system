@@ -1,0 +1,11 @@
+POST http://localhost:4000/patients/123e4567-e89b-12d3-a456-426614174001/plan-enrollment
+Content-Type: application/json
+X-User-Id: 123e4567-e89b-12d3-a456-426614174001
+
+{
+  "planCode": "STANDARD",
+  "discountCode": "WELCOME10",
+  "cadence": "MONTHLY",
+  "currency": "USD"
+}
+

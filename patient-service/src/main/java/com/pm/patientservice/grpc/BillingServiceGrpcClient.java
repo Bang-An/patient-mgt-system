@@ -1,8 +1,9 @@
 package com.pm.patientservice.grpc;
 
-import billing.BillingRequest;
-import billing.BillingResponse;
+
+import billing.BillingAccountResponse;
 import billing.BillingServiceGrpc;
+import billing.CreateBillingAccountRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.slf4j.Logger;
@@ -30,14 +31,30 @@ public class BillingServiceGrpcClient {
     blockingStub = BillingServiceGrpc.newBlockingStub(channel);
   }
 
-  public BillingResponse createBillingAccount(String patientId, String name,
-      String email) {
+  public BillingAccountResponse createBillingAccount(String patientId, String planCode, String discountCode, String cadence,
+                                                     String currency) {
 
-    BillingRequest request = BillingRequest.newBuilder().setPatientId(patientId)
-        .setName(name).setEmail(email).build();
+    CreateBillingAccountRequest request = CreateBillingAccountRequest.newBuilder()
+        .setPatientId(patientId)
+        .setPlanCode(planCode)
+        .setDiscountCode(discountCode)
+        .setCadence(cadence)
+        .setCurrency(currency)
+        .build();
 
-    BillingResponse response = blockingStub.createBillingAccount(request);
+    BillingAccountResponse response = blockingStub.createBillingAccount(request);
     log.info("Received response from billing service via GRPC: {}", response);
     return response;
   }
+
+//  public BillingResponse createBillingAccount(String patientId, String name,
+//      String email) {
+//
+//    BillingRequest request = BillingRequest.newBuilder().setPatientId(patientId)
+//        .setName(name).setEmail(email).build();
+//
+//    BillingResponse response = blockingStub.createBillingAccount(request);
+//    log.info("Received response from billing service via GRPC: {}", response);
+//    return response;
+//  }
 }

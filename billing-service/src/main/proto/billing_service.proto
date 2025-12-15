@@ -4,16 +4,102 @@ option java_multiple_files = true;
 option java_package = "billing";
 
 service BillingService {
-  rpc CreateBillingAccount (BillingRequest) returns (BillingResponse);
+//  rpc CreateBillingAccount (BillingRequest) returns (BillingResponse);
+
+  rpc CreateBillingAccount(CreateBillingAccountRequest) returns (BillingAccountResponse);
+  rpc UpdateBillingAccountPlan(UpdateBillingAccountPlanRequest) returns (BillingAccountResponse);
+  rpc GetBillingAccount(GetBillingAccountRequest) returns (BillingAccountResponse);
+  rpc ListInvoices(ListInvoicesRequest) returns (ListInvoicesResponse);
+  rpc GetInvoice(GetInvoiceRequest) returns (InvoiceResponse);
 }
 
-message BillingRequest {
-  string patientId = 1;
-  string name = 2;
-  string email = 3;
+
+
+//message BillingRequest {
+//  string patientId = 1;
+//  string name = 2;
+//  string email = 3;
+//}
+//
+//message BillingResponse {
+//  string accountId = 1;
+//  string status = 2;
+//}
+//
+// Requests
+message CreateBillingAccountRequest {
+  string patient_id   = 1;
+  string plan_code    = 2;              // BASIC | STANDARD | PREMIUM
+  string discount_code= 3;              // optional
+  string cadence      = 4;              // MONTHLY | ANNUALLY
+  string currency     = 5;              // e.g., USD
 }
 
-message BillingResponse {
-  string accountId = 1;
-  string status = 2;
+message UpdateBillingAccountPlanRequest {
+  string billing_account_id = 1;        // or patient_id if you prefer
+  string patient_id         = 2;        // optional if using account_id
+  string new_plan_code      = 3;
+  string discount_code      = 4;        // optional (replace existing)
+  string cadence            = 5;        // optional (defaults to existing)
+  string effective_date     = 6;        // optional, ISO date; default = today
+}
+
+message GetBillingAccountRequest {
+  string billing_account_id = 1;
+  string patient_id         = 2;        // use one or the other
+}
+
+message ListInvoicesRequest {
+  string billing_account_id = 1;        // or patient_id if you expose it
+  string patient_id         = 2;
+  int32  page               = 3;        // optional paging
+  int32  size               = 4;
+}
+
+message GetInvoiceRequest {
+  string invoice_id = 1;
+}
+
+// Responses
+message BillingAccountResponse {
+  string billing_account_id = 1;
+  string patient_id         = 2;
+  string plan_code          = 3;
+  string discount_code      = 4;   // nullable
+  string account_status     = 5;   // ACTIVE | CANCELED
+  string cadence            = 6;   // MONTHLY | ANNUALLY
+  string cycle_anchor       = 7;   // ISO date
+  string activated_at       = 8;   // ISO date
+  string canceled_at        = 9;   // ISO date (nullable)
+  string last_invoiced_end  = 10;  // ISO date (nullable)
+  string currency           = 11;
+}
+
+message InvoiceResponse {
+  string invoice_id         = 1;
+  string billing_account_id = 2;
+  string period_start       = 3;  // ISO date
+  string period_end         = 4;  // ISO date
+  int64  subtotal_cents     = 5;
+  int64  proration_cents    = 6;
+  int64  discount_cents     = 7;
+  int64  total_cents        = 8;
+  string status             = 9;  // DUE | PAID
+  string created_at         = 10; // ISO date
+  string due_at             = 11; // ISO date
+  repeated InvoiceLineResponse lines = 12;
+}
+
+message InvoiceLineResponse {
+  string invoice_line_id = 1;
+  string description     = 2;
+  int64  amount_cents    = 3;  // +charge, –credit
+  int32  quantity        = 4;  // default 1
+}
+
+message ListInvoicesResponse {
+  repeated InvoiceResponse invoices = 1;
+  int32 page = 2;
+  int32 size = 3;
+  int32 total_pages = 4;
 }
