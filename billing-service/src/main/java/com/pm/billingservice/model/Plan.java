@@ -28,7 +28,10 @@ public class Plan {
     private ProrationPolicy prorationPolicy;
 
     @NotNull
-    private Boolean discountable;
+    private boolean discountable;
+
+    @NotNull
+    private boolean active;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     List<BillingAccount> billingAccounts = new ArrayList<>();
@@ -73,11 +76,11 @@ public class Plan {
         this.prorationPolicy = prorationPolicy;
     }
 
-    public Boolean getDiscountable() {
+    public boolean isDiscountable() {
         return discountable;
     }
 
-    public void setDiscountable(Boolean discountable) {
+    public void setDiscountable(boolean discountable) {
         this.discountable = discountable;
     }
 
@@ -87,5 +90,13 @@ public class Plan {
 
     public void setBillingAccounts(List<BillingAccount> billingAccounts) {
         this.billingAccounts = billingAccounts;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
