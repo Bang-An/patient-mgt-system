@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS discount (
 );
 
 INSERT INTO discount (discount_code, discount_type, discount_value, apply_to_plan_code, active)
+SELECT 'DISCOUNT0', 'AMOUNT', 0, NULL, TRUE
+WHERE NOT EXISTS (SELECT 1 FROM discount WHERE discount_code = 'DISCOUNT0');
+
+INSERT INTO discount (discount_code, discount_type, discount_value, apply_to_plan_code, active)
 SELECT 'WELCOME10', 'PERCENT', 1000, NULL, TRUE
 WHERE NOT EXISTS (SELECT 1 FROM discount WHERE discount_code = 'WELCOME10');
 

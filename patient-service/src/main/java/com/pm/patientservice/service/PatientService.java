@@ -1,5 +1,7 @@
 package com.pm.patientservice.service;
 
+import billing.BillingAccountResponse;
+import com.pm.patientservice.dto.CreateBillingPlanResponseDTO;
 import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
 import com.pm.patientservice.exception.EmailAlreadyExistsException;
@@ -48,7 +50,8 @@ public class PatientService {
 
 //    billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(),
 //        newPatient.getName(), newPatient.getEmail());
-//
+
+//    // send event to Kafka topic about new patient creation
 //    kafkaProducer.sendEvent(newPatient);
 
     return PatientMapper.toDTO(newPatient);
@@ -78,5 +81,22 @@ public class PatientService {
 
   public void deletePatient(UUID id) {
     patientRepository.deleteById(id);
+  }
+
+  public CreateBillingPlanResponseDTO createBillingAccount(String patientId, String planCode, String discountCode, String cadence, String currency) {
+    BillingAccountResponse response = billingServiceGrpcClient.createBillingAccount(patientId, planCode, discountCode,
+            cadence, currency);
+    CreateBillingPlanResponseDTO responseDTO = new CreateBillingPlanResponseDTO();
+    responseDTO.setBillingAccountId(response.getBillingAccountId());
+    responseDTO.setPatientId(response.getPatientId());
+    responseDTO.setPlanCode(response.getPlanCode());
+    responseDTO.setDiscountCode(response.getDiscountCode());
+    responseDTO.setAccountStatus(response.getAccountStatus());
+    responseDTO.setCadence(response.getCadence());
+    responseDTO.setCycleAnchor(response.getCycleAnchor());
+    responseDTO.setActivatedAt(response.getActivatedAt());
+    responseDTO.setCanceledAt(response.getCanceledAt());
+    responseDTO.setLastInvoicedEnd(response.getLastInvoicedEnd());
+    return responseDTO;
   }
 }
