@@ -25,7 +25,7 @@ WHERE NOT EXISTS (SELECT 1 FROM plan WHERE plan_code = 'PREMIUM');
 CREATE TABLE IF NOT EXISTS discount (
     discount_code       VARCHAR(50)  PRIMARY KEY,
     discount_type       VARCHAR(50)  NOT NULL, -- PERCENT | AMOUNT
-    discount_value      BIGINT       NOT NULL, -- bps when percent, cents when amount
+    discount_value      INT          NOT NULL, -- bps when percent, cents when amount
     apply_to_plan_code  VARCHAR(50),
     active              BOOLEAN      NOT NULL,
     CONSTRAINT fk_discount_plan FOREIGN KEY (apply_to_plan_code) REFERENCES plan(plan_code)
@@ -36,7 +36,7 @@ SELECT 'DISCOUNT0', 'AMOUNT', 0, NULL, TRUE
 WHERE NOT EXISTS (SELECT 1 FROM discount WHERE discount_code = 'DISCOUNT0');
 
 INSERT INTO discount (discount_code, discount_type, discount_value, apply_to_plan_code, active)
-SELECT 'WELCOME10', 'PERCENT', 1000, NULL, TRUE
+SELECT 'WELCOME10', 'PERCENTAGE', 1000, NULL, TRUE
 WHERE NOT EXISTS (SELECT 1 FROM discount WHERE discount_code = 'WELCOME10');
 
 -- NOTE: With single apply_to_plan_code, we map NONPROFIT50 to STANDARD here.
@@ -59,6 +59,27 @@ CREATE TABLE IF NOT EXISTS billing_account (
     last_invoiced_end DATE,
     CONSTRAINT fk_ba_plan FOREIGN KEY (plan_code) REFERENCES plan(plan_code),
     CONSTRAINT fk_ba_discount FOREIGN KEY (discount_code) REFERENCES discount(discount_code)
+);
+
+-- Billing account change history (effective-dated)
+CREATE TABLE IF NOT EXISTS billing_account_change (
+    id                 UUID PRIMARY KEY,
+    billing_account_id UUID         NOT NULL,
+    change_type        VARCHAR(50)  NOT NULL, -- PLAN_CHANGE | PLAN_CANCEL | etc.
+    effective_at       DATE         NOT NULL,
+    old_plan_code      VARCHAR(50),
+    new_plan_code      VARCHAR(50),
+    old_discount_code  VARCHAR(50),
+    new_discount_code  VARCHAR(50),
+    old_cadence        VARCHAR(20),
+    new_cadence        VARCHAR(20),
+    old_status         VARCHAR(20),
+    new_status         VARCHAR(20),
+    CONSTRAINT fk_bac_ba FOREIGN KEY (billing_account_id) REFERENCES billing_account(id),
+    CONSTRAINT fk_bac_old_plan FOREIGN KEY (old_plan_code) REFERENCES plan(plan_code),
+    CONSTRAINT fk_bac_new_plan FOREIGN KEY (new_plan_code) REFERENCES plan(plan_code),
+    CONSTRAINT fk_bac_old_discount FOREIGN KEY (old_discount_code) REFERENCES discount(discount_code),
+    CONSTRAINT fk_bac_new_discount FOREIGN KEY (new_discount_code) REFERENCES discount(discount_code)
 );
 
 INSERT INTO billing_account (id, patient_id, plan_code, discount_code, account_status,
@@ -109,6 +130,7 @@ SELECT '33333333-3333-3333-3333-333333333333',
        '2024-12-31'
 WHERE NOT EXISTS (SELECT 1 FROM billing_account WHERE id = '33333333-3333-3333-3333-333333333333');
 
+-- Sample change: account 222 upgrades from STANDARD to PREMIUM mid-cycle (for proration testing)
 -- Invoices
 CREATE TABLE IF NOT EXISTS invoice (
     id               UUID PRIMARY KEY,

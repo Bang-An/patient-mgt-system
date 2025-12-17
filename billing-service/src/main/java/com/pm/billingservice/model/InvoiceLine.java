@@ -70,4 +70,20 @@ public class InvoiceLine {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    /**
+     * Convenience factory for building a line item before attaching to an invoice.
+     */
+    public static InvoiceLine create(String description, long amountCents) {
+        return create(description, amountCents, 1);
+    }
+
+    public static InvoiceLine create(String description, long amountCents, int quantity) {
+        InvoiceLine line = new InvoiceLine();
+        line.setId(UUID.randomUUID());
+        line.setDescription(description);
+        line.setAmountCents(amountCents);
+        line.setQuantity(quantity);
+        return line;
+    }
 }

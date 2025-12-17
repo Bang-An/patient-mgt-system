@@ -43,7 +43,7 @@ public class PlanCatalogService {
     }
 
     public void assertDiscountCompatibleWithPlan(Plan plan, Discount discount) {
-        if (!plan.isDiscountable()) {
+        if (!plan.isDiscountable() && discount.getDiscountCode() != DiscountCode.DISCOUNT0) {
             throw new PlanNotDiscountableException("Plan code " + plan.getPlanCode() + " is not discountable");
         }
 
