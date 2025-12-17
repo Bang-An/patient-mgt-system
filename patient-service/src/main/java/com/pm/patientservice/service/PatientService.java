@@ -4,6 +4,8 @@ import billing.BillingAccountResponse;
 import com.pm.patientservice.dto.CreateBillingPlanResponseDTO;
 import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
+import com.pm.patientservice.dto.PlanChangeRequestDTO;
+import com.pm.patientservice.dto.CancelPlanRequestDTO;
 import com.pm.patientservice.exception.EmailAlreadyExistsException;
 import com.pm.patientservice.exception.PatientNotFoundException;
 import com.pm.patientservice.grpc.BillingServiceGrpcClient;
@@ -86,6 +88,26 @@ public class PatientService {
   public CreateBillingPlanResponseDTO createBillingAccount(String patientId, String planCode, String discountCode, String cadence, String currency) {
     BillingAccountResponse response = billingServiceGrpcClient.createBillingAccount(patientId, planCode, discountCode,
             cadence, currency);
+    return toBillingPlanResponse(response);
+  }
+
+  public CreateBillingPlanResponseDTO changeBillingPlan(String billingAccountId, PlanChangeRequestDTO requestDTO) {
+    BillingAccountResponse response = billingServiceGrpcClient.updateBillingAccountPlan(
+            billingAccountId,
+            requestDTO.getPlanCode(),
+            requestDTO.getDiscountCode(),
+            requestDTO.getEffectiveDate());
+    return toBillingPlanResponse(response);
+  }
+
+  public CreateBillingPlanResponseDTO cancelBillingPlan(String billingAccountId, CancelPlanRequestDTO requestDTO) {
+    BillingAccountResponse response = billingServiceGrpcClient.cancelBillingAccount(
+            billingAccountId,
+            requestDTO.getEffectiveDate());
+    return toBillingPlanResponse(response);
+  }
+
+  private CreateBillingPlanResponseDTO toBillingPlanResponse(BillingAccountResponse response) {
     CreateBillingPlanResponseDTO responseDTO = new CreateBillingPlanResponseDTO();
     responseDTO.setBillingAccountId(response.getBillingAccountId());
     responseDTO.setPatientId(response.getPatientId());

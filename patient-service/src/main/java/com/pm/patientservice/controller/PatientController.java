@@ -4,6 +4,8 @@ import com.pm.patientservice.dto.CreateBillingPlanRequestDTO;
 import com.pm.patientservice.dto.CreateBillingPlanResponseDTO;
 import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
+import com.pm.patientservice.dto.PlanChangeRequestDTO;
+import com.pm.patientservice.dto.CancelPlanRequestDTO;
 import com.pm.patientservice.dto.validators.CreatePatientValidationGroup;
 import com.pm.patientservice.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -98,6 +100,40 @@ public class PatientController {
 
         return ResponseEntity.ok(billingPlanResponseDTO);
 
+    }
+
+    @PostMapping("/{id}/plan-change")
+    @Operation(summary = "Change Patient Billing Plan")
+    public ResponseEntity<CreateBillingPlanResponseDTO> changeBillingPlan(
+            @RequestHeader("X-User-Id") UUID userIdInHeader,
+            @PathVariable UUID id,
+            @RequestBody PlanChangeRequestDTO requestDTO) {
+        if (!userIdInHeader.equals(id)) {
+            log.warn("User id in header {} does not match path variable id {}", userIdInHeader, id);
+            return ResponseEntity.status(403).build();
+        }
+
+        CreateBillingPlanResponseDTO responseDTO = patientService.changeBillingPlan(
+                requestDTO.getBillingAccountId(),
+                requestDTO);
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/{id}/plan-cancel")
+    @Operation(summary = "Cancel Patient Billing Plan")
+    public ResponseEntity<CreateBillingPlanResponseDTO> cancelBillingPlan(
+            @RequestHeader("X-User-Id") UUID userIdInHeader,
+            @PathVariable UUID id,
+            @RequestBody CancelPlanRequestDTO requestDTO) {
+        if (!userIdInHeader.equals(id)) {
+            log.warn("User id in header {} does not match path variable id {}", userIdInHeader, id);
+            return ResponseEntity.status(403).build();
+        }
+
+        CreateBillingPlanResponseDTO responseDTO = patientService.cancelBillingPlan(
+                requestDTO.getBillingAccountId(),
+                requestDTO);
+        return ResponseEntity.ok(responseDTO);
     }
 
 }

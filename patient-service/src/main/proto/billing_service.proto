@@ -9,6 +9,7 @@ service BillingService {
 
   rpc CreateBillingAccount(CreateBillingAccountRequest) returns (BillingAccountResponse);
   rpc UpdateBillingAccountPlan(UpdateBillingAccountPlanRequest) returns (BillingAccountResponse);
+  rpc CancelBillingAccount(CancelBillingAccountRequest) returns (BillingAccountResponse);
   rpc GetBillingAccount(GetBillingAccountRequest) returns (BillingAccountResponse);
   rpc ListInvoices(ListInvoicesRequest) returns (ListInvoicesResponse);
   rpc GetInvoice(GetInvoiceRequest) returns (InvoiceResponse);
@@ -41,8 +42,12 @@ message UpdateBillingAccountPlanRequest {
   string patient_id         = 2;        // optional if using account_id
   string new_plan_code      = 3;
   string discount_code      = 4;        // optional (replace existing)
-  string cadence            = 5;        // optional (defaults to existing)
-  string effective_date     = 6;        // optional, ISO date; default = today
+  string effective_date     = 5;        // optional, ISO date; default = today
+}
+
+message CancelBillingAccountRequest {
+  string billing_account_id = 1;
+  string effective_date     = 2; // optional, ISO date; default = today
 }
 
 message GetBillingAccountRequest {

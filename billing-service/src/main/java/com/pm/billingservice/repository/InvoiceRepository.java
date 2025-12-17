@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
+    public boolean existsByBillingAccountIdAndPeriodStartAndPeriodEnd(UUID billingAccountId,
+                                                                      java.time.LocalDate periodStart,
+                                                                      java.time.LocalDate periodEnd);
 }

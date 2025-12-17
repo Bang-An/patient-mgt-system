@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -160,5 +161,43 @@ public class Invoice {
 
     public void setLines(List<InvoiceLine> lines) {
         this.lines = lines;
+    }
+
+    /**
+     * Convenience factory to build an invoice aggregate with its lines wired up.
+     */
+    public static Invoice create(BillingAccount billingAccount,
+                                 LocalDate periodStart,
+                                 LocalDate periodEnd,
+                                 long subtotalCents,
+                                 long prorationCents,
+                                 long discountCents,
+                                 long totalCents,
+                                 LocalDate createdAt,
+                                 LocalDate dueAt,
+                                 Collection<InvoiceLine> invoiceLines) {
+        Invoice invoice = new Invoice();
+        invoice.setId(UUID.randomUUID());
+        invoice.setBillingAccount(billingAccount);
+        invoice.setPeriodStart(periodStart);
+        invoice.setPeriodEnd(periodEnd);
+        invoice.setSubtotalCents(subtotalCents);
+        invoice.setProrationCents(prorationCents);
+        invoice.setDiscountCents(discountCents);
+        invoice.setTotalCents(totalCents);
+        invoice.setStatus(InvoiceStatus.DUE);
+        invoice.setCreatedAt(createdAt);
+        invoice.setDueAt(dueAt);
+
+        if (invoiceLines != null) {
+            for (InvoiceLine line : invoiceLines) {
+                if (line.getId() == null) {
+                    line.setId(UUID.randomUUID());
+                }
+                line.setInvoice(invoice);
+                invoice.getLines().add(line);
+            }
+        }
+        return invoice;
     }
 }
