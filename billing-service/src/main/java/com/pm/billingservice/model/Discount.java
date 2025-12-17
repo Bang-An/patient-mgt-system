@@ -22,7 +22,7 @@ public class Discount {
     // if discountType is PERCENTAGE, discountValue represents basis points (e.g., 1500 bps for 15%)
     // if discountType is AMOUNT, discountValue represents a fixed amount in cents
     @NotNull
-    private long discountValue;
+    private int discountValue;
 
     // Null = applies to all plans
     // PlanCode = only applies to this specific plan
@@ -51,11 +51,11 @@ public class Discount {
         this.discountType = discountType;
     }
 
-    public long getDiscountValue() {
+    public int getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(long discountValue) {
+    public void setDiscountValue(int discountValue) {
         this.discountValue = discountValue;
     }
 
