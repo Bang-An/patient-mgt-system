@@ -59,22 +59,21 @@ public class BillingAccountService {
 
         Plan newPlan = planCatalogService.loadPlan(newPlanCode);
 
-        // Determine discount to apply after change
-        DiscountCode discountToApply;
-        if (!newPlan.isDiscountable()) {
-            discountToApply = DiscountCode.DISCOUNT0; // strip discount when moving to non-discountable plan
-        } else {
+        DiscountCode discountToApply = DiscountCode.DISCOUNT0;
+        Discount discountEntity = null;
+
+        if (newPlan.isDiscountable()) {
             discountToApply = requestedDiscountCode != null ? requestedDiscountCode
-                    : (account.getDiscount() != null ? account.getDiscount().getDiscountCode() : DiscountCode.DISCOUNT0);
-            if (discountToApply != null) {
-                planCatalogService.validatePlanAndDiscount(newPlanCode, discountToApply);
-            }
+                    : account.getDiscount().getDiscountCode();
+            discountEntity = planCatalogService.loadDiscount(discountToApply);
+            planCatalogService.validatePlanAndDiscount(newPlan, discountEntity);
+        } else {
+            discountEntity = planCatalogService.loadDiscount(discountToApply);
         }
 
-        Discount discountEntity = discountToApply == null ? null : planCatalogService.loadDiscount(discountToApply);
 
         PlanCode oldPlanCode = account.getPlan().getPlanCode();
-        DiscountCode oldDiscountCode = account.getDiscount() == null ? null : account.getDiscount().getDiscountCode();
+        DiscountCode oldDiscountCode = account.getDiscount().getDiscountCode();
 
         account.setPlan(newPlan);
         account.setDiscount(discountEntity);

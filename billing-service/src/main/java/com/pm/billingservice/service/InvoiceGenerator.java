@@ -81,8 +81,7 @@ public class InvoiceGenerator {
             baseAmountCents = cadence == BillingCadence.MONTHLY ? oldPlan.getMonthlyPriceCents()
                     : oldPlan.getAnnualPriceCents();
         } else {
-            baseAmountCents = account.getBillingCadence() == BillingCadence.MONTHLY ? account.getPlan()
-                    .getMonthlyPriceCents()
+            baseAmountCents = cadence == BillingCadence.MONTHLY ? account.getPlan().getMonthlyPriceCents()
                     : account.getPlan().getAnnualPriceCents();
         }
         InvoiceLine baseLine = InvoiceLine.create("Plan price: ", baseAmountCents);

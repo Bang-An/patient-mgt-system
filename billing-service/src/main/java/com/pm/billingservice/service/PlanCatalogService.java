@@ -42,7 +42,7 @@ public class PlanCatalogService {
         return discount;
     }
 
-    public void assertDiscountCompatibleWithPlan(Plan plan, Discount discount) {
+    private void assertDiscountCompatibleWithPlan(Plan plan, Discount discount) {
         if (!plan.isDiscountable() && discount.getDiscountCode() != DiscountCode.DISCOUNT0) {
             throw new PlanNotDiscountableException("Plan code " + plan.getPlanCode() + " is not discountable");
         }
@@ -57,6 +57,10 @@ public class PlanCatalogService {
     public void validatePlanAndDiscount(PlanCode planCode, DiscountCode discountCode) {
         Plan plan = loadPlan(planCode);
         Discount discount = loadDiscount(discountCode);
+        assertDiscountCompatibleWithPlan(plan, discount);
+    }
+
+    public void validatePlanAndDiscount(Plan plan, Discount discount) {
         assertDiscountCompatibleWithPlan(plan, discount);
     }
 
