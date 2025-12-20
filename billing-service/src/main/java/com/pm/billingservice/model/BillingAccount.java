@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
+@Table(name = "billing_account")
 public class BillingAccount {
     @Id
     private UUID id;
@@ -22,8 +23,7 @@ public class BillingAccount {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "discount_code")
-    @Column(name = "discount_code", nullable = false)
+    @JoinColumn(name = "discount_code", nullable = false)
     private Discount discount;
 
     @NotNull
